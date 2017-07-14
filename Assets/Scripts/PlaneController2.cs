@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaneController : MonoBehaviour {
-	public float upwardForceToApply = 100.0f;
-	public float maxSpeedY = 10.0f;
-	Vector2 worldVelocity = Vector2.right*2.5f;
+public class PlaneController2 : MonoBehaviour {
+	public float upwardForceToApply = 100f;
+	public float maxSpeedY = 5.0f;
+	Vector2 worldVelocity = Vector2.right*.5f;
 
 	public Vector3 initialPosition = new Vector3 ();
 	public Quaternion initialRotation = new Quaternion();
@@ -18,9 +18,13 @@ public class PlaneController : MonoBehaviour {
 	public ObstacleController obstacles;
 	public UIController uiController;
 
+
+
+
 	void Start() {
-		//		getRigidBody2d ().centerOfMass = new Vector2 (-1, 0.4f);
-		//		getRigidBody2d ().angularVelocity = 10.0f;
+		Physics2D.gravity = new Vector2 (0.0f, 0.0f);
+		getRigidBody2d ().centerOfMass = new Vector2 (-1, 0.4f);
+		getRigidBody2d ().angularVelocity = 10.0f;
 		initialPosition = gameObject.transform.position;
 		initialRotation = gameObject.transform.rotation;
 		UnityEngine.Rigidbody2D rb = getRigidBody2d ();
@@ -36,38 +40,37 @@ public class PlaneController : MonoBehaviour {
 	}
 
 	public void resetToMenuState() {
-		gameObject.transform.SetPositionAndRotation (initialPosition, initialRotation);
+		gameObject.transform.position = initialPosition;
+		gameObject.transform.rotation = initialRotation;
 		getRigidBody2d ().Sleep ();
 		activePlane.GetComponent<Animator> ().speed = 0;
-		uiController.resetScore();
 	}
 
 	public void resetPlaneInIngame() {
-		UnityEngine.Rigidbody2D rb = getRigidBody2d ();
 		activePlane.GetComponent<Animator> ().speed = 1;
-		rb.WakeUp ();
+		getRigidBody2d ().WakeUp ();
 		gameObject.transform.SetPositionAndRotation (initialPosition, initialRotation);
+		UnityEngine.Rigidbody2D rb = getRigidBody2d ();
 		rb.angularVelocity = initialAngularVelocity;
 		rb.velocity = Vector2.zero;
-
-
 	}
-	void FixedUpdate(){
-		if (manager.gameState == GameManager.GAMESTATE.kIngame) {
-			UnityEngine.Rigidbody2D rb = getRigidBody2d ();
-			Vector2 direction = rb.velocity;
-			direction += worldVelocity;
-			float angle = Mathf.Atan2 (direction.y, direction.x) * Mathf.Rad2Deg;
-			rb.MoveRotation (angle);
 
-			if (Mathf.Abs (rb.velocity.y) >= maxSpeedY) {
-				rb.velocity = new Vector2 (rb.velocity.x, Mathf.Sign (rb.velocity.y) * maxSpeedY);
-			} 
-		}
-	}
 	public void throttleUp() {
 		UnityEngine.Rigidbody2D rb = getRigidBody2d ();
-		rb.AddForce (Vector2.up * upwardForceToApply);
+		rb.AddForce (Vector2.up * 50f);
+
+//		var dir = rb.velocity;
+//		dir += worldVelocity;
+//
+//		var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+//		var diffAngle = angle - (rb.rotation + 90);		
+//		rb.MoveRotation(angle);
+//
+//		if (Mathf.Abs(rb.velocity.y) >= maxSpeedY){
+//			rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.y) * maxSpeedY);
+//		}     
+
+
 	}
 
 	public void switchPlane() {
@@ -87,7 +90,6 @@ public class PlaneController : MonoBehaviour {
 		if (LayerMask.LayerToName (collision.gameObject.layer) == "Borders") {
 			resetPlaneInIngame ();
 			obstacles.resetObstaclesInIngame ();
-			uiController.resetScore ();
 		}
 	}
 
@@ -95,11 +97,16 @@ public class PlaneController : MonoBehaviour {
 		if (LayerMask.LayerToName (other.gameObject.layer) == "Borders") {
 			resetPlaneInIngame ();
 			obstacles.resetObstaclesInIngame ();
-			uiController.resetScore ();
 		}
 		if (other.tag == "Obstacles") {
-			uiController.addScore ();
+			uiController.addScore();
+			Debug.Log ("Plane crossed border "+uiController.score);
 
 		}
+	}
+
+	public void printInfo() {
+		Debug.Log ("center of Mass : " + getRigidBody2d ().centerOfMass.ToString ());
+		Debug.Log ("angular velocity : " + getRigidBody2d ().angularVelocity.ToString ());
 	}
 }

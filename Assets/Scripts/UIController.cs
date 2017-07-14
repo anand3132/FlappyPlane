@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class UIController : MonoBehaviour {
 
 	// gui components
@@ -14,13 +15,16 @@ public class UIController : MonoBehaviour {
 	public Button switchPlaneButton;
 	public Button menuButton;
 
-	// scoring systems
-	int score=10;
-	int bestScore=10;
+	public GameManager manager;
 
-	// Use this for initialization
+	// scoring systems
+	public int score=0;
+	int bestScore = 0;
+
 	void Start () {
-		bestScore = PlayerPrefs.GetInt ("bestScore");
+		//PlayerPrefs.SetInt ("bestScore", 0);
+		score = 0;
+		bestScore = PlayerPrefs.GetInt ("bestScore");;
 	}
 
 	public void switchToMenu() {
@@ -34,26 +38,30 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void switchToIngame() {
-		scoreText.text = "score: " + score;
-		bestScoreText.text = "Best: " + PlayerPrefs.GetInt ("bestScore");
 		tapText.text = "";
 		menuButton.gameObject.SetActive(true);
 		switchPlaneButton.gameObject.SetActive(false);
 		flappyBanner.gameObject.SetActive(false);
 		tap.gameObject.SetActive (false);
 	}
+	void Update(){
+		if (manager.gameState == GameManager.GAMESTATE.kIngame) {
+			scoreText.text = "Score: " + score.ToString ();
+			bestScoreText.text = "Best: " + PlayerPrefs.GetInt ("bestScore").ToString ();
+		}
+	}
 
-	public void addScore(int score) {
+	public void addScore() {
 		score++;
-		if (score > bestScore) {
-			PlayerPrefs.SetInt ("bestScore", score);
+		if (score>bestScore ) {
 			bestScore = score;
+			PlayerPrefs.SetInt ("bestScore", score);
 		}
 	}
 
 	public void resetScore() {
 		score = 0;
-		scoreText.text = "score: " + score;
+		//scoreText.text = "Score: " + score.ToString ();
 	}
 
 	public int getHighScore() {

@@ -9,12 +9,10 @@ public class GameManager : MonoBehaviour {
 		kIngame,
 		kMaxState
 	}
-
 	public UIController uiController;
 	public GameObject obstacles;
 	public PlaneController plane;
 	public GAMESTATE gameState = GAMESTATE.kMenu;
-
 	void Start () {
 		switchToMenu ();
 	}
@@ -33,9 +31,12 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void updateMenuLogic() {
-		if(Input.touchCount==2|| Input.GetMouseButtonDown(0)) {		
-			switchToInGame ();
-			// plane.switchPlane();
+		if(Input.touchCount==2|| Input.GetMouseButtonDown(0)) {	
+			if(!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+			{
+				switchToInGame ();
+
+			}
 		}
 	}
 
@@ -48,10 +49,9 @@ public class GameManager : MonoBehaviour {
 	public void switchToMenu() {
 		gameState = GAMESTATE.kMenu;
 		obstacles.SetActive (false);
-
-		uiController.switchToMenu ();
-		plane.printInfo();
 		plane.resetToMenuState();
+		uiController.switchToMenu ();
+		//plane.printInfo();
 	}
 
 	public void switchToInGame() {
@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void switchPlane() {
+		plane.switchPlane ();
 		print ("Plaine Switched");
 	}
 }

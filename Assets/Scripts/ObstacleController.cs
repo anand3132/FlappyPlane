@@ -2,16 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObstacleGenerator : MonoBehaviour {
-
+public class ObstacleController : MonoBehaviour {
+	public GameManager manager;
+	public GameObject obstacle;
+	public Vector3 initialPosition = new Vector3 ();
+	int speed =4;
 	// Use this for initialization
 	void Start () {
-		
+		initialPosition = gameObject.transform.position;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
-		//gameObject.transform.
+		if (manager.gameState == GameManager.GAMESTATE.kIngame) {
+			StartScroll ();
+		}
+	}
+	void StartScroll(){
+		//int randomNumber = (int)Random.Range (0f, 100.0f);
+		if (gameObject.transform.position.x > -3)
+			this.transform.Translate (Vector3.left * Time.deltaTime * speed);
+		else {
+			gameObject.transform.position = initialPosition;
+		}
+
+	}
+	public void resetObstaclesInIngame(){
+		gameObject.transform.position = initialPosition;
 	}
 
 }
