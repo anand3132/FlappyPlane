@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject obstacles;
 	public PlaneController plane;
 	public GAMESTATE gameState = GAMESTATE.kMenu;
+
 	void Start () {
 		switchToMenu ();
 	}

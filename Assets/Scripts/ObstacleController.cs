@@ -6,7 +6,11 @@ public class ObstacleController : MonoBehaviour {
 	public GameManager manager;
 	public GameObject obstacle;
 	public Vector3 initialPosition = new Vector3 ();
-	int speed =4;
+	public Vector3 randomPosition = new Vector3 ();
+
+	int speed =3;
+	float randomNumber;
+
 	// Use this for initialization
 	void Start () {
 		initialPosition = gameObject.transform.position;
@@ -18,16 +22,17 @@ public class ObstacleController : MonoBehaviour {
 		}
 	}
 	void StartScroll(){
-		//int randomNumber = (int)Random.Range (0f, 100.0f);
-		if (gameObject.transform.position.x > -3)
-			this.transform.Translate (Vector3.left * Time.deltaTime * speed);
-		else {
-			gameObject.transform.position = initialPosition;
+		if (gameObject.transform.position.x > -3) {
+			transform.Translate (Vector3.left * Time.deltaTime * speed);
 		}
-
+		else {
+			resetObstaclesInIngame ();
+		}
 	}
 	public void resetObstaclesInIngame(){
-		gameObject.transform.position = initialPosition;
+		randomNumber = Random.Range (-1f, 1f);
+		randomPosition.y = randomNumber ;
+		gameObject.transform.position =initialPosition+randomPosition;
 	}
 
 }
