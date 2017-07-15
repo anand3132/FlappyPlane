@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+
+// This class is used to controll the flow of our game.
+// Created By Anand.A
 
 public class GameManager : MonoBehaviour {
 	public enum GAMESTATE {
@@ -9,9 +11,11 @@ public class GameManager : MonoBehaviour {
 		kIngame,
 		kMaxState
 	}
+
+	// controller references.
 	public UIController uiController;
-	public GameObject obstacles;
-	public PlaneController plane;
+	public ObstacleController obstacleController;
+	public PlaneController planeController;
 	public GAMESTATE gameState = GAMESTATE.kMenu;
 
 	void Start () {
@@ -32,38 +36,30 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void updateMenuLogic() {
-		if(Input.touchCount==2|| Input.GetMouseButtonDown(0)) {	
-			if(!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
-			{
-				switchToInGame ();
-
-			}
-		}
+		// we can add any logic for menu here. 
 	}
 
 	private void updateIngameLogic() {
-		if(Input.touchCount==2|| Input.GetMouseButtonDown(0)) {
-			plane.throttleUp ();
+		if(Input.touchCount == 2 || Input.GetMouseButtonDown(0)) {
+			planeController.throttleUp ();
 		}
 	}
 
 	public void switchToMenu() {
 		gameState = GAMESTATE.kMenu;
-		obstacles.SetActive (false);
-		plane.resetToMenuState();
+		obstacleController.switchToMenu();
+		planeController.resetToMenuState();
 		uiController.switchToMenu ();
-		//plane.printInfo();
 	}
 
 	public void switchToInGame() {
 		gameState = GAMESTATE.kIngame;
-		obstacles.SetActive (true);
+		obstacleController.switchToInGame ();
 		uiController.switchToIngame ();
-		plane.resetPlaneInIngame ();
+		planeController.resetPlaneInIngame ();
 	}
 
 	public void switchPlane() {
-		plane.switchPlane ();
-		print ("Plaine Switched");
+		planeController.switchPlane ();
 	}
 }

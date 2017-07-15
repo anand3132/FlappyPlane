@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// This class is used to controll the flappy plane of our game.
+// Created By Anand.A
+
 public class PlaneController : MonoBehaviour {
+	// game play vars
 	public float upwardForceToApply = 100.0f;
 	public float maxSpeedY = 10.0f;
-	Vector2 worldVelocity = Vector2.right*2.5f;
-
+	Vector2 offsetVelocity = new Vector3 (5f, 0f);
 	public Vector3 initialPosition = new Vector3 ();
 	public Quaternion initialRotation = new Quaternion();
 	public float initialAngularVelocity = 0.0f;
+
+	// plane properties
 	public GameObject planeRed;
 	public GameObject planeGreen;
 	public GameObject activePlane;
 
+	// controller references.
 	public GameManager manager;
 	public ObstacleController obstacles;
 	public UIController uiController;
 
 	void Start() {
-		//		getRigidBody2d ().centerOfMass = new Vector2 (-1, 0.4f);
-		//		getRigidBody2d ().angularVelocity = 10.0f;
 		initialPosition = gameObject.transform.position;
 		initialRotation = gameObject.transform.rotation;
 		UnityEngine.Rigidbody2D rb = getRigidBody2d ();
@@ -49,22 +53,23 @@ public class PlaneController : MonoBehaviour {
 		gameObject.transform.SetPositionAndRotation (initialPosition, initialRotation);
 		rb.angularVelocity = initialAngularVelocity;
 		rb.velocity = Vector2.zero;
-
-
 	}
-	void FixedUpdate(){
+
+	void FixedUpdate() {
 		if (manager.gameState == GameManager.GAMESTATE.kIngame) {
+			// plane sine effect- by getting the angle using arctangent
 			UnityEngine.Rigidbody2D rb = getRigidBody2d ();
 			Vector2 direction = rb.velocity;
-			direction += worldVelocity;
+			direction += offsetVelocity;
 			float angle = Mathf.Atan2 (direction.y, direction.x) * Mathf.Rad2Deg;
 			rb.MoveRotation (angle);
-
+			// Debug.Log ("direction: " + direction + " angle: " + angle + " velocity: " + rb.velocity);
 			if (Mathf.Abs (rb.velocity.y) >= maxSpeedY) {
 				rb.velocity = new Vector2 (rb.velocity.x, Mathf.Sign (rb.velocity.y) * maxSpeedY);
 			} 
 		}
 	}
+
 	public void throttleUp() {
 		UnityEngine.Rigidbody2D rb = getRigidBody2d ();
 		rb.AddForce (Vector2.up * upwardForceToApply);
@@ -99,7 +104,6 @@ public class PlaneController : MonoBehaviour {
 		}
 		if (other.tag == "Obstacles") {
 			uiController.addScore ();
-
 		}
 	}
 }
